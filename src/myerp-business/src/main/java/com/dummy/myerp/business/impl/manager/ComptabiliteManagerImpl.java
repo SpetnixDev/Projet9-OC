@@ -1,21 +1,18 @@
 package com.dummy.myerp.business.impl.manager;
 
 import java.math.BigDecimal;
-import java.util.ArrayList;
+import java.text.SimpleDateFormat;
 import java.util.List;
 import java.util.Set;
 import javax.validation.ConstraintViolation;
 import javax.validation.ConstraintViolationException;
 
+import com.dummy.myerp.model.bean.comptabilite.*;
 import org.apache.commons.lang3.ObjectUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.transaction.TransactionStatus;
 import com.dummy.myerp.business.contrat.manager.ComptabiliteManager;
 import com.dummy.myerp.business.impl.AbstractBusinessManager;
-import com.dummy.myerp.model.bean.comptabilite.CompteComptable;
-import com.dummy.myerp.model.bean.comptabilite.EcritureComptable;
-import com.dummy.myerp.model.bean.comptabilite.JournalComptable;
-import com.dummy.myerp.model.bean.comptabilite.LigneEcritureComptable;
 import com.dummy.myerp.technical.exception.FunctionalException;
 import com.dummy.myerp.technical.exception.NotFoundException;
 
@@ -62,26 +59,28 @@ public class ComptabiliteManagerImpl extends AbstractBusinessManager implements 
     // TODO à tester
     @Override
     public synchronized void addReference(EcritureComptable pEcritureComptable) {
-        // TODO à implémenter
-        // Bien se réferer à la JavaDoc de cette méthode !
-        /* Le principe :
-                1.  Remonter depuis la persitance la dernière valeur de la séquence du journal pour l'année de l'écriture
-                    (table sequence_ecriture_comptable)
-                2.  * S'il n'y a aucun enregistrement pour le journal pour l'année concernée :
-                        1. Utiliser le numéro 1.
-                    * Sinon :
-                        1. Utiliser la dernière valeur + 1
-                3.  Mettre à jour la référence de l'écriture avec la référence calculée (RG_Compta_5)
-                4.  Enregistrer (insert/update) la valeur de la séquence en persitance
-                    (table sequence_ecriture_comptable)
-         */
+        String journalCode = pEcritureComptable.getJournal().getCode();
+        int year = Integer.parseInt(new SimpleDateFormat("yyyy").format(pEcritureComptable.getDate()));
 
-        List<EcritureComptable> listEcritureComptables = getListEcritureComptable();
+        SequenceEcritureComptable sequence = null;
 
-        int number = 1;
+        try {
+            sequence = getDaoProxy().getComptabiliteDao().getSequenceEcritureComptable(journalCode, year);
+        } catch (NotFoundException | NullPointerException e) {
+            System.err.println(e.getMessage());
+        }
 
-        if (!listEcritureComptables.isEmpty()) {
-            number = 1;
+        int numeroSequence = sequence == null ? 1 : sequence.getDerniereValeur() + 1;
+
+        String reference = String.format("%s-%d/%05d", journalCode, year, numeroSequence);
+        pEcritureComptable.setReference(reference);
+
+        if (sequence == null) {
+            sequence = new SequenceEcritureComptable(journalCode, year, numeroSequence);
+            getDaoProxy().getComptabiliteDao().insertSequenceEcritureComptable(sequence);
+        } else {
+            sequence.setDerniereValeur(numeroSequence);
+            getDaoProxy().getComptabiliteDao().updateSequenceEcritureComptable(sequence);
         }
     }
 
