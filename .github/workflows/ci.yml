@@ -22,10 +22,10 @@ jobs:
           cache: maven
 
       - name: Build & exécuter les tests
-        run: mvn clean verify --batch-mode
+        run: mvn --file src/pom.xml clean verify --batch-mode
 
       - name: Générer site (rapport de tests)
-        run: mvn site --batch-mode
+        run: mvn --file src/pom.xml site --batch-mode
 
       - name: Publier le rapport de tests
         uses: actions/upload-artifact@v4
