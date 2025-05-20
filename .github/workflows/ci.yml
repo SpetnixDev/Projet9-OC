@@ -24,6 +24,9 @@ jobs:
       - name: Build & exécuter les tests
         run: mvn --file src/pom.xml clean verify --batch-mode
 
+      - name: Build & installer les modules
+        run: mvn --file src/pom.xml clean install --batch-mode
+
       - name: Générer site (rapport de tests)
         run: mvn --file src/pom.xml site --batch-mode
 
