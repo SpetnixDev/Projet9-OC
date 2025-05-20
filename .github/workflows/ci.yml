@@ -28,7 +28,7 @@ jobs:
         run: mvn site --batch-mode
 
       - name: Publier le rapport de tests
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: surefire-report
           path: src/*/target/site/surefire-report.html
