@@ -35,3 +35,9 @@ jobs:
         with:
           name: surefire-report
           path: src/*/target/site/surefire-report.html
+
+      - name: Publier le rapport JaCoCo
+        uses: actions/upload-artifact@v4
+        with:
+          name: jacoco-report
+          path: src/*/target/site/jacoco/index.html
