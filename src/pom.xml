@@ -445,6 +445,19 @@
                 </reportSets>
             </plugin>
 
+            <plugin>
+                <groupId>org.jacoco</groupId>
+                <artifactId>jacoco-maven-plugin</artifactId>
+                <version>0.8.13</version>
+                <reportSets>
+                    <reportSet>
+                        <reports>
+                            <report>report</report>
+                        </reports>
+                    </reportSet>
+                </reportSets>
+            </plugin>
+
             <!-- ===== Création du rapport des tests unitaires (JUnit) ===== -->
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
