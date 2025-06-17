@@ -21,9 +21,6 @@ jobs:
           java-version: 8.0.392+8
           cache: maven
 
-      - name: Build & exécuter les tests
-        run: mvn --file src/pom.xml clean verify --batch-mode
-
       - name: Build & installer les modules
         run: mvn --file src/pom.xml clean install --batch-mode
 
